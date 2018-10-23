@@ -80,6 +80,7 @@ if("$ENV{VERBOSE}" STREQUAL "1")
   set(CMAKE_VERBOSE_MAKEFILE ON)
 endif()
 
+add_definitions(-DMSHADOW_USE_F16C=0)
 
 if(MSVC)
   add_definitions(-DWIN32_LEAN_AND_MEAN)
