@@ -249,13 +249,28 @@ if(USE_MKLDNN)
   endif()
   set(WITH_TEST OFF)
   set(WITH_EXAMPLE OFF)
+
+  if(HUNTER_ENABLED)
+    hunter_add_package(mkldnn)
+    find_package(mkldnn CONFIG REQUIRED)
+  else()
+
   add_subdirectory(3rdparty/mkldnn)
+
+  endif()
 
   include_directories(3rdparty/mkldnn/include)
   add_definitions(-DUSE_MKL=1)
   add_definitions(-DCUB_MKL=1)
   add_definitions(-DMXNET_USE_MKLDNN=1)
+
+  if(HUNTER_ENABLED)
+    list(APPEND mxnet_LINKER_LIBS mkldnn::mkldnn)
+  else()
+
   list(APPEND mxnet_LINKER_LIBS mkldnn)
+
+  endif()
 endif()
 
 # Allow Cuda compiles outside of src tree to find things in 'src' and 'include'
@@ -671,6 +686,13 @@ if(UNIX)
   target_link_libraries(mxnet PRIVATE ${BEGIN_WHOLE_ARCHIVE} $<TARGET_FILE:mxnet_static> ${END_WHOLE_ARCHIVE})
   target_link_libraries(mxnet PRIVATE mxnet_static)
   set_target_properties(mxnet_static PROPERTIES OUTPUT_NAME mxnet)
+
+  if(HUNTER_ENABLED)
+    hunter_add_package(mkldnn)
+    find_package(mkldnn CONFIG REQUIRED)
+    target_link_libraries(mxnet_static PUBLIC mkldnn::mkldnn)
+
+  endif()
 else()
   add_library(mxnet SHARED ${SOURCE})
 endif()
