@@ -4,7 +4,7 @@ endif()
 
 set(CPP_EXAMPLE_LIBS
   ${BEGIN_WHOLE_ARCHIVE} mxnet_static ${END_WHOLE_ARCHIVE}
-  ${BEGIN_WHOLE_ARCHIVE} dmlc ${END_WHOLE_ARCHIVE}
+  ${BEGIN_WHOLE_ARCHIVE} dmlc::dmlc ${END_WHOLE_ARCHIVE}
   ${mxnet_LINKER_LIBS}
   )
 

@@ -708,6 +708,9 @@ if(UNIX)
   set_target_properties(mxnet_static PROPERTIES OUTPUT_NAME mxnet)
 
   if(HUNTER_ENABLED)
+    hunter_add_package(dmlc-core)
+    find_package(dmlc CONFIG REQUIRED)
+    target_link_libraries(mxnet_static PUBLIC dmlc::dmlc)
     hunter_add_package(mkldnn)
     find_package(mkldnn CONFIG REQUIRED)
     target_link_libraries(mxnet_static PUBLIC mkldnn::mkldnn)
@@ -763,7 +766,7 @@ if(USE_OPENCV AND OpenCV_VERSION_MAJOR GREATER 2)
   target_link_libraries(im2rec
     ${mxnet_LINKER_LIBS}
     ${OpenCV_LIBS}
-    dmlc
+    dmlc::dmlc
     ${pslite_LINKER_LIBS}
     )
 else()
@@ -771,7 +774,11 @@ else()
     is required for im2rec, im2rec will not be available")
 endif()
 
+if(NOT HUNTER_ENABLED)
+
 target_link_libraries(mxnet PUBLIC dmlc)
+
+endif()
 
 if(MSVC AND USE_MXNET_LIB_NAMING)
   set_target_properties(mxnet PROPERTIES OUTPUT_NAME "libmxnet")
