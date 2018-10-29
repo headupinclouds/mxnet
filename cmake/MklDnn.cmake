@@ -15,6 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
+if(HUNTER_ENABLED)
+  # Hunter will download libraries
+  return()
+endif()
+
 #this file download mklml
 
 message(STATUS "download mklml")
