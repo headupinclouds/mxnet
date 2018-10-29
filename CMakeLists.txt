@@ -307,8 +307,19 @@ else()
 endif()
 
 if(USE_CUDA AND FIRST_CUDA)
+ hunter_add_package(mkl)
+  if(HUNTER_ENABLED)
+    set(ENV{MKL_ROOT} ${MKL_ROOT})
+  endif()
+
   include(cmake/ChooseBlas.cmake)
+
+  if(NOT HUNTER_ENABLED)
+
   include(3rdparty/mshadow/cmake/Utils.cmake)
+
+  endif()
+
   include(cmake/FirstClassLangCuda.cmake)
   include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 else()
