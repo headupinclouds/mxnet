@@ -707,6 +707,10 @@ if(UNIX)
   target_link_libraries(mxnet PRIVATE mxnet_static)
   set_target_properties(mxnet_static PROPERTIES OUTPUT_NAME mxnet)
 
+  target_include_directories(
+      mxnet_static PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/c_api>
+  )
+
   if(HUNTER_ENABLED)
     hunter_add_package(dmlc-core)
     find_package(dmlc CONFIG REQUIRED)
