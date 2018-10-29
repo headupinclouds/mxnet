@@ -461,6 +461,11 @@ endif()
 
 # ---[ LAPack
 if(USE_LAPACK)
+  hunter_add_package(LAPACK)
+  if(HUNTER_ENABLED)
+    find_package(LAPACK CONFIG REQUIRED)
+  endif()
+
   message("USE_LAPACK is ON")
   add_definitions(-DMXNET_USE_LAPACK=1)
   if (NOT MSVC)
