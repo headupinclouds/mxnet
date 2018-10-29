@@ -27,4 +27,11 @@ if(USE_CPP_PACKAGE)
     add_subdirectory(example)
   endif()
 
+  # * CMAKE_INSTALL_INCLUDEDIR
+  include(GNUInstallDirs)
+
+  install(
+      DIRECTORY include/
+      DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+  )
 endif()
