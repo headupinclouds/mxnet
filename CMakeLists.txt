@@ -715,10 +715,26 @@ if(UNIX)
     hunter_add_package(dmlc-core)
     find_package(dmlc CONFIG REQUIRED)
     target_link_libraries(mxnet_static PUBLIC dmlc::dmlc)
+
+    hunter_add_package(tvm)
+    find_package(tvm CONFIG REQUIRED)
+    target_link_libraries(mxnet_static PUBLIC tvm::nnvm_compiler)
+
+    hunter_add_package(mshadow)
+    find_package(mshadow CONFIG REQUIRED)
+    target_link_libraries(mxnet_static PUBLIC mshadow::mshadow)
+
+    hunter_add_package(cub)
+    find_package(cub CONFIG REQUIRED)
+    target_link_libraries(mxnet_static PUBLIC cub::cub)
+
     hunter_add_package(mkldnn)
     find_package(mkldnn CONFIG REQUIRED)
     target_link_libraries(mxnet_static PUBLIC mkldnn::mkldnn)
 
+    hunter_add_package(dlpack)
+    find_package(dlpack CONFIG REQUIRED)
+    target_link_libraries(mxnet_static PUBLIC dlpack::dlpack)
   endif()
 else()
   add_library(mxnet SHARED ${SOURCE})
