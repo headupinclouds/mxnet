@@ -620,9 +620,19 @@ if(USE_CUDA)
     mshadow_select_nvcc_arch_flags(NVCC_FLAGS_ARCH)
     string(REPLACE ";" " " NVCC_FLAGS_ARCH "${NVCC_FLAGS_ARCH}")
     set(CMAKE_CUDA_FLAGS "${NVCC_FLAGS_ARCH}")
-    list(APPEND mxnet_LINKER_LIBS cublas cufft cusolver curand)
+    list(APPEND mxnet_LINKER_LIBS ${CUDA_CUBLAS_LIBRARIES} ${CUDA_CUFFT_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_curand_LIBRARY})
     if(ENABLE_CUDA_RTC)
-        list(APPEND mxnet_LINKER_LIBS nvrtc cuda)
+        find_library(
+            CUDA_CUDA_LIB cuda
+            PATHS ${CUDA_TOOLKIT_ROOT_DIR}
+            PATH_SUFFIXES lib lib64 lib/stubs lib64/stubs
+        )
+        find_library(
+            CUDA_NVRTC_LIB nvrtc
+            PATHS ${CUDA_TOOLKIT_ROOT_DIR}
+            PATH_SUFFIXES lib lib64
+        )
+        list(APPEND mxnet_LINKER_LIBS ${CUDA_NVRTC_LIB} ${CUDA_CUDA_LIB})
         add_definitions(-DMXNET_ENABLE_CUDA_RTC=1)
     endif()
     list(APPEND SOURCE ${CUDA})
