@@ -469,7 +469,7 @@ if(USE_LAPACK)
   message("USE_LAPACK is ON")
   add_definitions(-DMXNET_USE_LAPACK=1)
   if (NOT MSVC)
-    list(APPEND mxnet_LINKER_LIBS lapack)
+    list(APPEND mxnet_LINKER_LIBS lapack blas)
   endif()
 endif()
 
