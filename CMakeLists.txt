@@ -697,44 +697,36 @@ endif()
 
 set(MXNET_INSTALL_TARGETS mxnet)
 if(UNIX)
-  # Create dummy file since we want an empty shared library before linking
-  set(DUMMY_SOURCE ${CMAKE_BINARY_DIR}/dummy.c)
-  file(WRITE ${DUMMY_SOURCE} "")
-  list(APPEND MXNET_INSTALL_TARGETS mxnet_static)
-  add_library(mxnet_static STATIC ${SOURCE})
-  add_library(mxnet SHARED ${DUMMY_SOURCE})
-  target_link_libraries(mxnet PRIVATE ${BEGIN_WHOLE_ARCHIVE} $<TARGET_FILE:mxnet_static> ${END_WHOLE_ARCHIVE})
-  target_link_libraries(mxnet PRIVATE mxnet_static)
-  set_target_properties(mxnet_static PROPERTIES OUTPUT_NAME mxnet)
+  add_library(mxnet SHARED ${SOURCE})
 
   target_include_directories(
-      mxnet_static PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/c_api>
+      mxnet PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/c_api>
   )
 
   if(HUNTER_ENABLED)
     hunter_add_package(dmlc-core)
     find_package(dmlc CONFIG REQUIRED)
-    target_link_libraries(mxnet_static PUBLIC dmlc::dmlc)
+    target_link_libraries(mxnet PUBLIC dmlc::dmlc)
 
     hunter_add_package(tvm)
     find_package(tvm CONFIG REQUIRED)
-    target_link_libraries(mxnet_static PUBLIC tvm::nnvm_compiler)
+    target_link_libraries(mxnet PUBLIC tvm::nnvm_compiler)
 
     hunter_add_package(mshadow)
     find_package(mshadow CONFIG REQUIRED)
-    target_link_libraries(mxnet_static PUBLIC mshadow::mshadow)
+    target_link_libraries(mxnet PUBLIC mshadow::mshadow)
 
     hunter_add_package(cub)
     find_package(cub CONFIG REQUIRED)
-    target_link_libraries(mxnet_static PUBLIC cub::cub)
+    target_link_libraries(mxnet PUBLIC cub::cub)
 
     hunter_add_package(mkldnn)
     find_package(mkldnn CONFIG REQUIRED)
-    target_link_libraries(mxnet_static PUBLIC mkldnn::mkldnn)
+    target_link_libraries(mxnet PUBLIC mkldnn::mkldnn)
 
     hunter_add_package(dlpack)
     find_package(dlpack CONFIG REQUIRED)
-    target_link_libraries(mxnet_static PUBLIC dlpack::dlpack)
+    target_link_libraries(mxnet PUBLIC dlpack::dlpack)
   endif()
 else()
   add_library(mxnet SHARED ${SOURCE})
