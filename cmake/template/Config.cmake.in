@@ -1,0 +1,29 @@
+@PACKAGE_INIT@
+
+if(@USE_MKLDNN@)
+  find_package(mkldnn CONFIG REQUIRED)
+endif()
+
+if(@USE_LAPACK@)
+  find_package(LAPACK CONFIG REQUIRED)
+endif()
+
+if(@UNIX@)
+  find_package(dmlc CONFIG REQUIRED)
+  find_package(tvm CONFIG REQUIRED)
+  find_package(mshadow CONFIG REQUIRED)
+  find_package(cub CONFIG REQUIRED)
+  find_package(mkldnn CONFIG REQUIRED)
+  find_package(dlpack CONFIG REQUIRED)
+endif()
+
+if("@USE_CUDA@" AND "@FIRST_CUDA@")
+  if("@BLAS@" STREQUAL "Atlas" OR "@BLAS@" STREQUAL "atlas")
+    # ...
+  elseif("@BLAS@" STREQUAL "Open" OR "@BLAS@" STREQUAL "open")
+    find_package(OpenBLAS CONFIG REQUIRED)
+  endif()
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/@TARGETS_EXPORT_NAME@.cmake")
+check_required_components("@PROJECT_NAME@")
