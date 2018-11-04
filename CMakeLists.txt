@@ -410,10 +410,15 @@ endif()
 
 # ---[ OpenCV
 if(USE_OPENCV)
-  find_package(OpenCV COMPONENTS core highgui imgproc imgcodecs)
-  if(NOT OpenCV_FOUND) # if not OpenCV 3.x, then imgcodecs are not found
-    message(STATUS "OpenCV imgcodecs missing")
-    find_package(OpenCV REQUIRED COMPONENTS core highgui imgproc)
+  if(HUNTER_ENABLED)
+    hunter_add_package(OpenCV)
+    find_package(OpenCV CONFIG REQUIRED)
+  else()
+    find_package(OpenCV COMPONENTS core highgui imgproc imgcodecs)
+    if(NOT OpenCV_FOUND) # if not OpenCV 3.x, then imgcodecs are not found
+      message(STATUS "OpenCV imgcodecs missing")
+      find_package(OpenCV REQUIRED COMPONENTS core highgui imgproc)
+    endif()
   endif()
   include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
   list(APPEND mxnet_LINKER_LIBS ${OpenCV_LIBS})
