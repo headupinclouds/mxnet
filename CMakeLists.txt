@@ -792,8 +792,8 @@ if(USE_OPENCV AND OpenCV_VERSION_MAJOR GREATER 2)
     target_link_libraries(im2rec mxnet)
   endif()
   target_link_libraries(im2rec
-    ${mxnet_LINKER_LIBS}
     ${OpenCV_LIBS}
+    ${mxnet_LINKER_LIBS}    
     dmlc::dmlc
     ${pslite_LINKER_LIBS}
     )
