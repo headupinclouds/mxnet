@@ -254,12 +254,9 @@ if(USE_MKLDNN)
     hunter_add_package(mkldnn)
     find_package(mkldnn CONFIG REQUIRED)
   else()
-
-  add_subdirectory(3rdparty/mkldnn)
-
+    add_subdirectory(3rdparty/mkldnn)
+    include_directories(3rdparty/mkldnn/include)    
   endif()
-
-  include_directories(3rdparty/mkldnn/include)
   add_definitions(-DUSE_MKL=1)
   add_definitions(-DCUB_MKL=1)
   add_definitions(-DMXNET_USE_MKLDNN=1)
@@ -315,9 +312,7 @@ if(USE_CUDA AND FIRST_CUDA)
   include(cmake/ChooseBlas.cmake)
 
   if(NOT HUNTER_ENABLED)
-
-  include(3rdparty/mshadow/cmake/Utils.cmake)
-
+    include(3rdparty/mshadow/cmake/Utils.cmake)
   endif()
 
   include(cmake/FirstClassLangCuda.cmake)
@@ -349,17 +344,22 @@ foreach(var ${C_CXX_INCLUDE_DIRECTORIES})
 endforeach()
 
 include_directories("include")
-include_directories("3rdparty/mshadow")
-include_directories("3rdparty/cub")
-include_directories("3rdparty/tvm/nnvm/include")
-include_directories("3rdparty/tvm/include")
-include_directories("3rdparty/dmlc-core/include")
-include_directories("3rdparty/dlpack/include")
 
-# commented out until PR goes through
-#if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/dlpack)
-#  add_subdirectory(3rdparty/dlpack)
-#endif()
+if(NOT HUNTER_ENABLED)
+  include_directories("3rdparty/mshadow")
+  include_directories("3rdparty/cub")
+  include_directories("3rdparty/tvm/nnvm/include")
+  include_directories("3rdparty/tvm/include")
+  include_directories("3rdparty/dmlc-core/include")
+  include_directories("3rdparty/dlpack/include")
+endif()
+
+if(NOT HUNTER_ENABLED)
+  # commented out until PR goes through
+  #if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/dlpack)
+  #  add_subdirectory(3rdparty/dlpack)
+  #endif()
+endif()
 
 # Prevent stripping out symbols (operator registrations, for example)
 if(NOT MSVC AND NOT APPLE)
@@ -469,13 +469,12 @@ if(USE_LAPACK)
   hunter_add_package(LAPACK)
   if(HUNTER_ENABLED)
     find_package(LAPACK CONFIG REQUIRED)
-    find_package(cblas CONFIG REQUIRED)
   endif()
 
   message("USE_LAPACK is ON")
   add_definitions(-DMXNET_USE_LAPACK=1)
   if (NOT MSVC)
-    list(APPEND mxnet_LINKER_LIBS lapack blas cblas)
+    list(APPEND mxnet_LINKER_LIBS lapack blas)
   endif()
 endif()
 
@@ -516,38 +515,56 @@ if(USE_CUDNN AND USE_CUDA)
   endif()
 endif()
 
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/dmlc-core/cmake)
-  add_subdirectory("3rdparty/dmlc-core")
+if(NOT HUNTER_ENABLED)
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/dmlc-core/cmake)
+    add_subdirectory("3rdparty/dmlc-core")
+  endif()
 endif()
 
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/mshadow/cmake)
-  add_subdirectory("3rdparty/mshadow")
+if(NOT HUNTER_ENABLED)
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/mshadow/cmake)
+    add_subdirectory("3rdparty/mshadow")
+  endif()
 endif()
 FILE(GLOB_RECURSE SOURCE "src/*.cc" "src/*.h" "include/*.h")
 FILE(GLOB_RECURSE CUDA "src/*.cu" "src/*.cuh")
 
 # add nnvm to source
-FILE(GLOB_RECURSE NNVMSOURCE
-  3rdparty/tvm/nnvm/src/c_api/*.cc
-  3rdparty/tvm/nnvm/src/core/*.cc
-  3rdparty/tvm/nnvm/src/pass/*.cc
-  3rdparty/tvm/nnvm/src/c_api/*.h
-  3rdparty/tvm/nnvm/src/core/*.h
-  3rdparty/tvm/nnvm/src/pass/*.h
-  3rdparty/tvm/nnvm/include/*.h)
-list(APPEND SOURCE ${NNVMSOURCE})
+if(NOT HUNTER_ENABLED)
+  FILE(GLOB_RECURSE NNVMSOURCE
+    3rdparty/tvm/nnvm/src/c_api/*.cc
+    3rdparty/tvm/nnvm/src/core/*.cc
+    3rdparty/tvm/nnvm/src/pass/*.cc
+    3rdparty/tvm/nnvm/src/c_api/*.h
+    3rdparty/tvm/nnvm/src/core/*.h
+    3rdparty/tvm/nnvm/src/pass/*.h
+    3rdparty/tvm/nnvm/include/*.h)
+  list(APPEND SOURCE ${NNVMSOURCE})
+endif()
 
 # add mshadow file
-FILE(GLOB_RECURSE MSHADOWSOURCE "3rdparty/mshadow/mshadow/*.h")
-FILE(GLOB_RECURSE MSHADOW_CUDASOURCE "3rdparty/mshadow/mshadow/*.cuh")
-list(APPEND SOURCE ${MSHADOWSOURCE})
-list(APPEND CUDA ${MSHADOW_CUDASOURCE})
+if(NOT HUNTER_ENABLED)
+  FILE(GLOB_RECURSE MSHADOWSOURCE "3rdparty/mshadow/mshadow/*.h")
+  FILE(GLOB_RECURSE MSHADOW_CUDASOURCE "3rdparty/mshadow/mshadow/*.cuh")
+  list(APPEND SOURCE ${MSHADOWSOURCE})
+  list(APPEND CUDA ${MSHADOW_CUDASOURCE})
+endif()
 
 # add source group
-FILE(GLOB_RECURSE GROUP_SOURCE "src/*.cc" "3rdparty/tvm/nnvm/*.cc" "plugin/*.cc")
-FILE(GLOB_RECURSE GROUP_Include "src/*.h" "3rdparty/tvm/nnvm/*.h" "3rdparty/mshadow/mshadow/*.h" "plugin/*.h")
-FILE(GLOB_RECURSE GROUP_CUDA "src/*.cu" "src/*.cuh" "3rdparty/mshadow/mshadow/*.cuh" "plugin/*.cu"
-  "plugin/*.cuh" "3rdparty/cub/cub/*.cuh")
+FILE(GLOB_RECURSE GROUP_SOURCE "src/*.cc" "plugin/*.cc")
+FILE(GLOB_RECURSE GROUP_Include "src/*.h" "plugin/*.h")
+FILE(GLOB_RECURSE GROUP_CUDA "src/*.cu" "src/*.cuh" "plugin/*.cu" "plugin/*.cuh")
+
+if(NOT HUNTER_ENABLED)
+  FILE(GLOB_RECURSE GROUP_SOURCE_ "3rdparty/tvm/nnvm/*.cc")
+  FILE(GLOB_RECURSE GROUP_Include_ "3rdparty/tvm/nnvm/*.h" "3rdparty/mshadow/mshadow/*.h")
+  FILE(GLOB_RECURSE GROUP_CUDA_ "3rdparty/mshadow/mshadow/*.cuh" "3rdparty/cub/cub/*.cuh")
+
+  LIST(APPEND GROUP_SOURCE ${GROUP_SOURCE_})
+  LIST(APPEND GROUP_Include ${GROUP_Include_})
+  LIST(APPEND GROUP_CUDA ${GROUP_CUDA_})
+endif()
+
 assign_source_group("Source" ${GROUP_SOURCE})
 assign_source_group("Include" ${GROUP_Include})
 assign_source_group("CUDA" ${GROUP_CUDA})
